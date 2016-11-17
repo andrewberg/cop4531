@@ -25,6 +25,7 @@ for edge in edges:
 	weight = int(edge[2]) # weight of the edge converted to int
 
 	graph[node1-1][node2-1] = weight # weight of the edge added to graph
+	graph[node2-1][node1-1] = weight # make the graph reflective over diag
 
 def findLowest(choose, notIncluded):
 	min = sys.maxint # min value to maxint
@@ -43,7 +44,7 @@ def printMST(conMST, g):
 
 	x = 1
 	for i in iterMST:
-		print "%d %d %d" % (conMST[x], x, graph[x][conMST[x]])
+		print "%d %d %d" % (conMST[x]+1, x+1, graph[x][conMST[x]])
 		x += 1
 
 conMST = [0 for x in range(nodeCount)] # init all values to 0
@@ -61,12 +62,7 @@ for vCount in range(nodeCount): # iterate over all the vertices
 
 	for v in range(nodeCount):
 		if (graph[u][v] and notIncluded[v] == False and graph[u][v] < choose[v]):
-			conMST[v] = u
-			choose[v] = graph[u][v]
+			conMST[v] = u # find the lowest and set it equal to mst
+			choose[v] = graph[u][v] # set the lowest weight for this spot
 
 printMST(conMST, graph)
-
-
-
-
-
