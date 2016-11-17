@@ -5,28 +5,6 @@ from sys import argv
 # Andrew Berg Prim.py for COP4531 due 11/22/16
 # open file that is passed in argv[1]
 
-file = open(argv[1], "r") # open file named in argv[1] in read mode
-
-# grab number of nodes
-nodeCount = int(file.readline().strip()) # read in number of nodes
-
-# nodecount by nodecount graph storage
-graph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
-
-# read by line and then parse line into lists
-edges = [] # empty list
-for line in file:
-	edges.append(line.strip().split(" ")) #strips \n then splits on " "
-
-# populate edges in graph, must subtract 1 from each index
-for edge in edges:
-	node1 = int(edge[0]) # first node of the edge converted to int
-	node2 = int(edge[1]) # second node of the edge converted to int
-	weight = int(edge[2]) # weight of the edge converted to int
-
-	graph[node1-1][node2-1] = weight # weight of the edge added to graph
-	graph[node2-1][node1-1] = weight # make the graph reflective over diag
-
 def findLowest(choose, notIncluded):
 	min = sys.maxint # min value to maxint
 	index = 0 # min index to 0
@@ -64,23 +42,52 @@ def printMST(conMST, g):
 	for i in pairs:
 		print "%d %d" % (i[0], i[1]) # print each pair tup1 then tup2
 
-conMST = [0 for x in range(nodeCount)] # init all values to 0
-choose = [sys.maxint for x in range(nodeCount)] # init all values to 0
-notIncluded = [False] * nodeCount # init all vertices to not visited
+def buildMST(graph, nodeCount):
+	conMST = [0 for x in range(nodeCount)] # init all values to 0
+	choose = [sys.maxint for x in range(nodeCount)] # init all values to 0
+	notIncluded = [False] * nodeCount # init all vertices to not visited
 
-conMST[0] = -1 # set the root of the MST
-choose[0] = 0 # make 0 so this is the first vertex being chosen
+	conMST[0] = -1 # set the root of the MST
+	choose[0] = 0 # make 0 so this is the first vertex being chosen
 
-for vCount in range(nodeCount): # iterate over all the vertices
-	# pick the minimum choose vertex from the set of verts not in MST
-	u = findLowest(choose, notIncluded)
+	for vCount in range(nodeCount): # iterate over all the vertices
+		# pick the minimum choose vertex from the set of verts not in MST
+		u = findLowest(choose, notIncluded)
+		
+		notIncluded[u] = True # add the picked vertex to the notIncluded
+
+		for v in range(nodeCount):
+			if (graph[u][v] and notIncluded[v] == False and graph[u][v] < choose[v]):
+				conMST[v] = u # find the lowest and set it equal to mst
+				choose[v] = graph[u][v] # set the lowest weight for this spot
 	
-	notIncluded[u] = True # add the picked vertex to the notIncluded
+	printMST(conMST, graph)
 
-	for v in range(nodeCount):
-		if (graph[u][v] and notIncluded[v] == False and graph[u][v] < choose[v]):
-			conMST[v] = u # find the lowest and set it equal to mst
-			choose[v] = graph[u][v] # set the lowest weight for this spot
+file = open(argv[1], "r") # open file named in argv[1] in read mode
 
+# grab number of nodes
+nodeCount = int(file.readline().strip()) # read in number of nodes
 
-printMST(conMST, graph)
+# nodecount by nodecount graph storage
+graph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
+
+# read by line and then parse line into lists
+edges = [] # empty list
+for line in file:
+	edges.append(line.strip().split(" ")) #strips \n then splits on " "
+
+# populate edges in graph, must subtract 1 from each index
+for edge in edges:
+	node1 = int(edge[0]) # first node of the edge converted to int
+	node2 = int(edge[1]) # second node of the edge converted to int
+	weight = int(edge[2]) # weight of the edge converted to int
+
+	graph[node1-1][node2-1] = weight # weight of the edge added to graph
+	graph[node2-1][node1-1] = weight # make the graph reflective over diag
+
+file.close() # close the file
+
+# ------------------------------
+# done building graph call Prim()
+
+buildMST(graph, nodeCount)
