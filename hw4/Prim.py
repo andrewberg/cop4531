@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
+# Andrew Berg Prim.py for COP4531 due 11/22/16
+
 import sys
 from sys import argv
-# Andrew Berg Prim.py for COP4531 due 11/22/16
-# open file that is passed in argv[1]
 
 def findLowest(choose, notIncluded):
 	min = sys.maxint # min value to maxint
@@ -63,17 +63,18 @@ def buildMST(graph, nodeCount):
 	
 	printMST(conMST, graph)
 
-file = open(argv[1], "r") # open file named in argv[1] in read mode
+lines = sys.stdin.readlines() # take all lines from stdin
 
 # grab number of nodes
-nodeCount = int(file.readline().strip()) # read in number of nodes
+nodeCount = int(lines[0].strip()) # read in number of nodes
+del lines[0] # remove first element
 
 # nodecount by nodecount graph storage
 graph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
 
 # read by line and then parse line into lists
 edges = [] # empty list
-for line in file:
+for line in lines:
 	edges.append(line.strip().split(" ")) #strips \n then splits on " "
 
 # populate edges in graph, must subtract 1 from each index
@@ -84,8 +85,6 @@ for edge in edges:
 
 	graph[node1-1][node2-1] = weight # weight of the edge added to graph
 	graph[node2-1][node1-1] = weight # make the graph reflective over diag
-
-file.close() # close the file
 
 # ------------------------------
 # done building graph call Prim()

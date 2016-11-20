@@ -1,19 +1,19 @@
 #!/usr/bin/python
 
+# Andrew Berg Kruskal.py for COP4531 due 11/22/16
+
 import sys
 from sys import argv
-from collections import defaultdict
-# Andrew Berg Kruskal.py for COP4531 due 11/22/16
-# open file that is passed in argv[1]
 
-file = open(argv[1], "r") # open file named in argv[1] in read mode
+lines = sys.stdin.readlines() # take all lines from stdin
 
 # grab number of nodes
-nodeCount = int(file.readline().strip()) # read in number of nodes
+nodeCount = int(lines[0].strip()) # read in number of nodes
+del lines[0] # remove first element that was already read in
 
 class Graph:
-    def __init__(self, vertices):
-        self.V = vertices # allocate number of verts
+    def __init__(self, nodes):
+        self.nodes = nodes # allocate number of verts
         self.graph = [] # dictionary to store all information
 
     def addEdge(self, u, v, w):
@@ -24,74 +24,63 @@ class Graph:
             return i
         return self.find(parent, parent[i]) # continue looking with recursion
 
-    def union(self, parent, rank, x, y):
-        xroot = self.find(parent, x) # call find on both parents
-        yroot = self.find(parent, y)
+    def isUnion(self, parent, rank, x, y):
+        xVal = self.find(parent, x) # call find on both parents
+        yVal = self.find(parent, y)
  
-        # Attach smaller rank tree under root of high rank tree
-        # (Union by Rank)
-        if rank[xroot] < rank[yroot]:
-            parent[xroot] = yroot
-        elif rank[xroot] > rank[yroot]:
-            parent[yroot] = xroot
-        #If ranks are same, then make one as root and increment
-        # its rank by one
-        else :
-            parent[yroot] = xroot
-            rank[xroot] += 1
+        if rank[xVal] < rank[yVal]:
+            parent[xVal] = yVal
+        elif rank[xVal] > rank[yVal]:
+            parent[yVal] = xVal
+        else:
+            parent[yVal] = xVal
+            rank[xVal] += 1
 
     def KruskalMST(self):
- 
-        result = [] #This will store the resultant MST
+        result = [] # use this to build the MST
  
         i = 0 # An index variable, used for sorted edges
         e = 0 # An index variable, used for result[]
- 
-        #Step 1:  Sort all the edges in non-decreasing order of their
-        # weight.  If we are not allowed to change the given graph, we
-        # can create a copy of graph
-        self.graph =  sorted(self.graph,key=lambda item: item[2])
-        #print self.graph
+
+        # goes through all the values based on weight from to least to
+        # greatest
+        self.graph = sorted(self.graph, key=lambda a: a[2])
  
         parent = [] ; rank = []
  
-        # Create V subsets with single elements
-        for node in range(self.V):
+        # goes through and creates trees based on each node of the graph
+        for node in range(self.nodes):
             parent.append(node)
             rank.append(0)
      
-        # Number of edges to be taken is equal to V-1
-        while e < self.V - 1:
- 
-            # Step 2: Pick the smallest edge and increment the index
-            # for next iteration
-            u,v,w =  self.graph[i]
+        # loop through the edges all except for one
+        while e < self.nodes - 1:
+            u,v,w = self.graph[i]
 
-            i = i + 1
-            x = self.find(parent, u)
-            y = self.find(parent ,v)
- 
-            # If including this edge does't cause cycle, include it
-            # in result and increment the index of result for next edge
-            if x != y:
-                e = e + 1  
-                result.append([u+1,v+1,w])
-                self.union(parent, rank, x, y)          
-            # Else discard the edge
+            x = self.find(parent, u) 
+            y = self.find(parent, v)
+            i += 1
+
+            if x != y: # make sure it does not cause an edge to be acycle
+                e += 1
+                result.append([u+1,v+1,w]) # increment u and v to display
+                                           # correctly at end
+                self.isUnion(parent, rank, x, y)  
+       
         # print
         result = sorted(result, key=lambda a: (a[0], a[1]))
 
         sumWeight = 0
         for x in result:
-        	sumWeight += x[2]
+        	sumWeight += x[2] # x[2] is the weight
         print(sumWeight)
         for x in result:
-        	print "%d %d" % (x[0], x[1])
+        	print "%d %d" % (x[0], x[1]) # print out all the edges in order
             
 g = Graph(nodeCount)
 # read by line and then parse line into lists
 edges = [] # empty list
-for line in file:
+for line in lines:
 	edges.append(line.strip().split(" ")) #strips \n then splits on " "
 
 # populate edges in graph, must subtract 1 from each index
@@ -100,6 +89,3 @@ for edge in edges:
 	g.addEdge(int(edge[0])-1, int(edge[1])-1, int(edge[2]))
 
 g.KruskalMST()
-
-
-
