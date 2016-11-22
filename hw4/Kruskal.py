@@ -5,12 +5,6 @@
 import sys
 from sys import argv
 
-lines = sys.stdin.readlines() # take all lines from stdin
-
-# grab number of nodes
-nodeCount = int(lines[0].strip()) # read in number of nodes
-del lines[0] # remove first element that was already read in
-
 def dfs(i):
     j = 0
     visited[i] = 1
@@ -97,6 +91,11 @@ class Graph:
         for x in result:
             print "%d %d" % (x.src, x.des) # print out all the edges in order
 
+file = open(argv[1], "r") # open file named in argv[1] in read mode
+
+# grab number of nodes
+nodeCount = int(file.readline().strip()) # read in number of nodes
+
 """Setup the values for the graph and the DFS check for
     connectivity"""           
 g = Graph(nodeCount)
@@ -105,7 +104,7 @@ visited = [0 for x in range(nodeCount)]
 
 # read by line and then parse line into lists
 edges = [] # empty list
-for line in lines:
+for line in file:
     edges.append(line.strip().split(" ")) #strips \n then splits on " "
 
 # populate edges in graph, must subtract 1 from each index

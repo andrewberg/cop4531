@@ -71,16 +71,14 @@ def buildMST(graph, nodeCount):
 	
 	printMST(conMST, graph)
 
-lines = sys.stdin.readlines() # take all lines from stdin
+file = open(argv[1], "r") # open file named in argv[1] in read mode
 
 # grab number of nodes
-nodeCount = int(lines[0].strip()) # read in number of nodes
+nodeCount = int(file.readline().strip()) # read in number of nodes
 
 if (nodeCount < 1):
 	print("Impossible")
 	sys.exit()
-
-del lines[0] # remove first element
 
 # nodecount by nodecount graph storage
 graph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
@@ -89,9 +87,10 @@ visited = [0 for x in range(nodeCount)]
 
 # read by line and then parse line into lists
 edges = [] # empty list
-for line in lines:
+for line in file:
 	edges.append(line.strip().split(" ")) #strips \n then splits on " "
 
+file.close()
 # populate edges in graph, must subtract 1 from each index
 for edge in edges:
 	node1 = int(edge[0]) # first node of the edge converted to int
