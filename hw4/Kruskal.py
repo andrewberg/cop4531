@@ -96,6 +96,10 @@ file = open(argv[1], "r") # open file named in argv[1] in read mode
 # grab number of nodes
 nodeCount = int(file.readline().strip()) # read in number of nodes
 
+if (nodeCount < 1):
+    print("Impossible")
+    sys.exit()
+
 """Setup the values for the graph and the DFS check for
     connectivity"""           
 g = Graph(nodeCount)
