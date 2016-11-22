@@ -5,6 +5,14 @@
 import sys
 from sys import argv
 
+def dfs(i):
+	j = 0
+	visited[i] = 1
+
+	for j in range(nodeCount):
+		if (visited[j] == 0 and connectedGraph[i][j]):
+			dfs(j)
+
 def findLowest(choose, notIncluded):
 	min = sys.maxint # min value to maxint
 	index = 0 # min index to 0
@@ -67,10 +75,17 @@ lines = sys.stdin.readlines() # take all lines from stdin
 
 # grab number of nodes
 nodeCount = int(lines[0].strip()) # read in number of nodes
+
+if (nodeCount < 1):
+	print("Impossible")
+	sys.exit()
+
 del lines[0] # remove first element
 
 # nodecount by nodecount graph storage
 graph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
+connectedGraph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
+visited = [0 for x in range(nodeCount)]
 
 # read by line and then parse line into lists
 edges = [] # empty list
@@ -83,8 +98,18 @@ for edge in edges:
 	node2 = int(edge[1]) # second node of the edge converted to int
 	weight = int(edge[2]) # weight of the edge converted to int
 
+	connectedGraph[node1-1][node2-1] = 1 # init actual nodes to 1
 	graph[node1-1][node2-1] = weight # weight of the edge added to graph
 	graph[node2-1][node1-1] = weight # make the graph reflective over diag
+
+"""Call DFS on the 0 vertex to check to make sure connected graph,
+	if connected graph then all nodes will be visited by DFS
+	from 0 vertex"""
+
+dfs(0)
+if (0 in visited):
+	print("Impossible")
+	sys.exit()
 
 # ------------------------------
 # done building graph call Prim()

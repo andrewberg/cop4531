@@ -11,6 +11,14 @@ lines = sys.stdin.readlines() # take all lines from stdin
 nodeCount = int(lines[0].strip()) # read in number of nodes
 del lines[0] # remove first element that was already read in
 
+def dfs(i):
+    j = 0
+    visited[i] = 1
+
+    for j in range(nodeCount):
+        if (visited[j] == 0 and connectedGraph[i][j]):
+            dfs(j)
+
 class Edge:
     def __init__(self, src, des, w):
         self.src = src
@@ -83,21 +91,36 @@ class Graph:
 
         sumWeight = 0
         for x in result:
-        	sumWeight += x.w # x[2] is the weight
+            sumWeight += x.w # x[2] is the weight
         print(sumWeight) # print the sumWeight after summing all weights
         
         for x in result:
-        	print "%d %d" % (x.src, x.des) # print out all the edges in order
-            
+            print "%d %d" % (x.src, x.des) # print out all the edges in order
+
+"""Setup the values for the graph and the DFS check for
+    connectivity"""           
 g = Graph(nodeCount)
+connectedGraph = [[0 for x in range(nodeCount)] for y in range(nodeCount)]
+visited = [0 for x in range(nodeCount)]
+
 # read by line and then parse line into lists
 edges = [] # empty list
 for line in lines:
-	edges.append(line.strip().split(" ")) #strips \n then splits on " "
+    edges.append(line.strip().split(" ")) #strips \n then splits on " "
 
 # populate edges in graph, must subtract 1 from each index
 
 for edge in edges:
-	g.addEdge(int(edge[0])-1, int(edge[1])-1, int(edge[2]))
+    g.addEdge(int(edge[0])-1, int(edge[1])-1, int(edge[2]))
+    connectedGraph[int(edge[0])-1][int(edge[1])-1] = 1
+
+"""Call DFS on the 0 vertex to check to make sure connected graph,
+    if connected graph then all nodes will be visited by DFS
+    from 0 vertex"""
+
+dfs(0)
+if (0 in visited):
+    print("Impossible")
+    sys.exit()
 
 g.KruskalMST()
