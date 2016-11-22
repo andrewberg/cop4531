@@ -6,12 +6,10 @@ import sys
 from sys import argv
 
 def dfs(i):
-	j = 0
-	visited[i] = 1
-
-	for j in range(nodeCount):
-		if (visited[j] == 0 and connectedGraph[i][j]):
-			dfs(j)
+    visited[i] = 1 # mark the ith vertice as visited
+    for j in range(nodeCount):
+        if (visited[j] == 0 and connectedGraph[i][j]):
+            dfs(j)
 
 def findLowest(choose, notIncluded):
 	min = sys.maxint # min value to maxint
